@@ -1,0 +1,645 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>первая попытка сайта</title>
+    <style>
+        body {
+            background: #efb4c8;
+        }
+        html, body {
+            background: #efb4c8;
+            color: #fff;
+            margin: 50px 25px 0px 25px;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .background-layers {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .layer {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            filter: blur(8px);
+            opacity: 0.7;
+        }
+        .layer1 {
+            width: 60vw; height: 60vw;
+            left: -10vw; top: -10vw;
+        }
+        .layer2 {
+            width: 40vw; height: 40vw;
+            right: -8vw; top: 20vh;
+        }
+        .layer3 {
+            width: 30vw; height: 30vw;
+            left: 20vw; bottom: -10vw;
+        }
+        .highlight {
+            background-color: #f9f9f9;
+            color: #e75480;
+            font-weight: bold;
+            inline-size: 80px;
+            margin: 10px 50px 20px 60px;
+        }
+        .gogo {
+            background-color: rgb(250, 249, 248);
+            font-style: italic;
+            color: #e75480;
+        }
+        .px-value {
+            text-align: left;
+            margin-left: 0;
+            margin-right: auto;
+            text-indent: 0;
+            font-size: 2.4em;
+            font-weight: bold;
+            color: #e75480;
+            letter-spacing: 2px;
+            margin-top: 24px;
+            margin-bottom: 18px;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100vh;
+            background: #fff;
+            color: #e75480;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            z-index: 1000;
+            transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+            font-size: 1.1em;
+        }
+        .sidebar a {
+            color: #e75480;
+            text-decoration: none;
+            margin: 18px 0;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: color 0.7s;
+        }
+        .sidebar a:hover {
+            color: #efb4c8;
+        }
+        .sidebar-toggle {
+            position: fixed;
+            left: 15px;
+            top: 15px;
+            background: #e75480;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+        }
+        .sidebar-toggle:hover {
+            background: #b92c5c;
+        }
+        .sidebar.closed {
+            transform: translateX(-100%);
+        }
+        .main-content {
+            margin-left: 0;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: margin-left 0.6s cubic-bezier(.4,2,.6,1);
+        }
+        .page-section, .px-value, .highlight, .gogo, p {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .carousel-container {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0 0 32px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        .carousel-track {
+            width: 100vw;
+            max-width: 100vw;
+            height: 220px;
+            overflow: hidden;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .carousel-img {
+            width: 100vw;
+            max-width: 100vw;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 0;
+            transition: opacity 0.4s;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e75480cc;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+            opacity: 0.85;
+        }
+        .carousel-btn.left { left: 18px; }
+        .carousel-btn.right { right: 18px; }
+        .carousel-btn:hover {
+            background: #b92c5c;
+        }
+        .catalog-container {
+            margin: 36px auto 32px auto;
+            max-width: 1200px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(231,84,128,0.10);
+            padding: 24px 18px 18px 18px;
+            z-index: 2;
+            position: relative;
+        }
+        .catalog-title {
+            color: #e75480;
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 2em;
+            letter-spacing: 1px;
+        }
+        .catalog-list {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+        .catalog-item {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(231,84,128,0.10);
+            padding: 18px 12px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+            min-width: 160px;
+            min-height: 210px;
+            max-width: 180px;
+        }
+        .catalog-item:hover {
+            box-shadow: 0 4px 18px rgba(231,84,128,0.18);
+            transform: translateY(-4px) scale(1.04);
+        }
+        .catalog-item img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        .catalog-item span {
+            color: #e75480;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .catalog-carousel-container {
+            width: 100vw;
+            max-width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 36px 0 32px 0;
+            z-index: 2;
+        }
+        .catalog-carousel-track {
+            width: 80vw;
+            max-width: 1100px;
+            overflow: hidden;
+            position: relative;
+        }
+        .catalog-carousel-list {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(.4,2,.6,1);
+            will-change: transform;
+        }
+        .catalog-carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #e75480cc;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+            opacity: 0.85;
+        }
+        .catalog-carousel-btn.left { left: 0; }
+        .catalog-carousel-btn.right { right: 0; }
+        .catalog-carousel-btn:hover {
+            background: #b92c5c;
+        }
+        .modal-icon-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: transparent;
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .modal-icon-overlay.hide {
+            /* overlay не нужен, просто скрываем кружок */
+        }
+        .floating-icon.big {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #e75480;
+            border: 5px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: #fff;
+            opacity: 0;
+            transform: scale(0.7);
+            animation: circle-fade-in 0.6s cubic-bezier(.4,2,.6,1) forwards;
+        }
+        .floating-icon.big.hide {
+            animation: circle-fade-out 0.6s cubic-bezier(.4,2,.6,1) forwards;
+        }
+        /* --- Приветственный кружок --- */
+        .welcome-circle {
+            position: fixed;
+            left: 50%;
+            top: 25%; /* Было 50%, теперь выше */
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 110px;
+            height: 110px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 4px 24px rgba(231,84,128,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            pointer-events: none;
+        }
+        .welcome-circle.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+        .welcome-circle.hide {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.7);
+            pointer-events: none;
+            transition: opacity 1.2s, transform 1.2s; /* Медленнее исчезает */
+        }
+        .welcome-circle-content {
+            font-size: 2.7em;
+            color: #e75480;
+            font-weight: bold;
+            user-select: none;
+        }
+        .welcome-circle-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #fff;
+            opacity: 0;
+            z-index: 4999;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .welcome-circle-bg.show {
+            opacity: 0.65;
+            pointer-events: auto;
+            transition: opacity 0.5s;
+        }
+        .welcome-circle-bg.hide {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s;
+        }
+        @keyframes circle-fade-in {
+            0% { opacity: 0; transform: scale(0.7); }
+            80% { opacity: 1; transform: scale(1.08); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes circle-fade-out {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.7); }
+        }
+        @media (max-width: 900px) {
+            .catalog-list {
+                gap: 14px;
+            }
+            .catalog-item {
+                min-width: 120px;
+                max-width: 140px;
+            }
+            .catalog-item img {
+                width: 100px;
+                height: 100px;
+            }
+            .catalog-carousel-track {
+                width: 98vw;
+                max-width: 98vw;
+            }
+        }
+        @media (max-width: 700px) {
+            .main-content, .carousel-container, .carousel-track {
+                width: 100vw;
+                max-width: 100vw;
+            }
+            .catalog-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .catalog-container {
+                padding: 12px 2vw 10px 2vw;
+            }
+            .px-value {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-layers">
+        <div class="layer layer1"></div>
+        <div class="layer layer2"></div>
+        <div class="layer layer3"></div>
+    </div>
+    <div class="welcome-circle-bg" id="welcomeCircleBg"></div>
+    <div class="welcome-circle" id="welcomeCircle">
+        <div class="welcome-circle-content">★</div>
+    </div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    <nav class="sidebar closed" id="sidebar">
+        <a href="#page1" onclick="showPage('page1')">хуй</a>
+        <a href="#page2" onclick="showPage('page2')">туда</a>
+        <a href="#page3" onclick="showPage('page3')">сюда</a>
+        <a href="#page4" onclick="showPage('page4')">ем</a>
+    </nav>
+    <div class="main-content">
+        <div id="page1" class="page-section"> 
+            <h1 class="px-value">margin:название </h1>
+            <span class="highlight">зроби свій вигляд</span>
+            <p>любой текст kjvkjv
+                <span class="gogo">наклон+цвет</span> лбой текст х2
+            </p>
+            <div class="carousel-container">
+                <button class="carousel-btn left" onclick="moveCarousel(-1)">&#8592;</button>
+                <div class="carousel-track">
+                    <img src="https://via.placeholder.com/1200x220/efb4c8/fff?text=Фото+1" class="carousel-img" style="display:block;">
+                    <img src="https://via.placeholder.com/1200x220/e75480/fff?text=Фото+2" class="carousel-img" style="display:none;">
+                    <img src="https://via.placeholder.com/1200x220/fff/efb4c8?text=Фото+3" class="carousel-img" style="display:none;">
+                </div>
+                <button class="carousel-btn right" onclick="moveCarousel(1)">&#8594;</button>
+            </div>
+        </div>
+        <div class="catalog-container">
+            <h2 class="catalog-title">Каталог товаров</h2>
+            <div class="catalog-list">
+                <div class="catalog-item" onclick="showProduct('product1')">
+                    <img src="https://via.placeholder.com/140x140/e75480/fff?text=Товар+1" alt="Товар 1">
+                    <span>Товар 1</span>
+                </div>
+                <div class="catalog-item" onclick="showProduct('product2')">
+                    <img src="https://via.placeholder.com/140x140/efb4c8/fff?text=Товар+2" alt="Товар 2">
+                    <span>Товар 2</span>
+                </div>
+                <div class="catalog-item" onclick="showProduct('product3')">
+                    <img src="https://via.placeholder.com/140x140/fff/e75480?text=Товар+3" alt="Товар 3">
+                    <span>Товар 3</span>
+                </div>
+                <div class="catalog-item" onclick="showProduct('product4')">
+                    <img src="https://via.placeholder.com/140x140/ffb4c8/fff?text=Товар+4" alt="Товар 4">
+                    <span>Товар 4</span>
+                </div>
+                <div class="catalog-item" onclick="showProduct('product5')">
+                    <img src="https://via.placeholder.com/140x140/efb4ff/fff?text=Товар+5" alt="Товар 5">
+                    <span>Товар 5</span>
+                </div>
+                <div class="catalog-item" onclick="showProduct('product6')">
+                    <img src="https://via.placeholder.com/140x140/efb4a8/fff?text=Товар+6" alt="Товар 6">
+                    <span>Товар 6</span>
+                </div>
+            </div>
+            <div class="catalog-carousel-container">
+                <button class="catalog-carousel-btn left" onclick="moveCatalog(-1)">&#8592;</button>
+                <div class="catalog-carousel-track">
+                    <div class="catalog-carousel-list" id="catalogCarouselList">
+                        <div class="catalog-item" onclick="goToProductPage('product1')">
+                            <img src="https://via.placeholder.com/140x140/e75480/fff?text=Товар+1" alt="Товар 1">
+                            <span>Товар 1</span>
+                        </div>
+                        <div class="catalog-item" onclick="goToProductPage('product2')">
+                            <img src="https://via.placeholder.com/140x140/efb4c8/fff?text=Товар+2" alt="Товар 2">
+                            <span>Товар 2</span>
+                        </div>
+                        <div class="catalog-item" onclick="goToProductPage('product3')">
+                            <img src="https://via.placeholder.com/140x140/fff/e75480?text=Товар+3" alt="Товар 3">
+                            <span>Товар 3</span>
+                        </div>
+                        <div class="catalog-item" onclick="goToProductPage('product4')">
+                            <img src="https://via.placeholder.com/140x140/ffb4c8/fff?text=Товар+4" alt="Товар 4">
+                            <span>Товар 4</span>
+                        </div>
+                        <div class="catalog-item" onclick="goToProductPage('product5')">
+                            <img src="https://via.placeholder.com/140x140/efb4ff/fff?text=Товар+5" alt="Товар 5">
+                            <span>Товар 5</span>
+                        </div>
+                        <div class="catalog-item" onclick="goToProductPage('product6')">
+                            <img src="https://via.placeholder.com/140x140/efb4a8/fff?text=Товар+6" alt="Товар 6">
+                            <span>Товар 6</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="catalog-carousel-btn right" onclick="moveCatalog(1)">&#8594;</button>
+            </div>
+        </div>
+    </div>
+    <div id="product1" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 1</h3>
+            <img src="https://via.placeholder.com/240x240/e75480/fff?text=Товар+1" alt="Товар 1">
+            <p>Описание товара 1. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <div id="product2" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 2</h3>
+            <img src="https://via.placeholder.com/240x240/efb4c8/fff?text=Товар+2" alt="Товар 2">
+            <p>Описание товара 2. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <div id="product3" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 3</h3>
+            <img src="https://via.placeholder.com/240x240/fff/e75480?text=Товар+3" alt="Товар 3">
+            <p>Описание товара 3. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <div id="product4" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 4</h3>
+            <img src="https://via.placeholder.com/240x240/ffb4c8/fff?text=Товар+4" alt="Товар 4">
+            <p>Описание товара 4. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <div id="product5" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 5</h3>
+            <img src="https://via.placeholder.com/240x240/efb4ff/fff?text=Товар+5" alt="Товар 5">
+            <p>Описание товара 5. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <div id="product6" class="product-modal" style="display:none">
+        <div class="product-content">
+            <span class="close-modal" onclick="closeProduct()">&times;</span>
+            <h3>Товар 6</h3>
+            <img src="https://via.placeholder.com/240x240/efb4a8/fff?text=Товар+6" alt="Товар 6">
+            <p>Описание товара 6. Здесь может быть подробная информация.</p>
+        </div>
+    </div>
+    <footer class="footer-contacts">
+        <a href="#" id="instagram-link" target="_blank" class="footer-link">Instagram</a>
+        <a href="#" id="telegram-link" target="_blank" class="footer-link">Telegram</a>
+        <a href="tel:+380931529693" class="footer-link">+380931529693</a>
+    </footer>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('closed');
+        }
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(function(sec) {
+                sec.style.display = 'none';
+            });
+            setTimeout(function() {
+                document.getElementById(pageId).style.display = 'block';
+            }, 300); // задержка для плавности (0.6s / 2)
+            // Закрыть меню на мобильных
+            document.getElementById('sidebar').classList.add('closed');
+        }
+        let carouselIndex = 0;
+        function moveCarousel(dir) {
+            const imgs = document.querySelectorAll('.carousel-img');
+            imgs[carouselIndex].style.display = 'none';
+            carouselIndex = (carouselIndex + dir + imgs.length) % imgs.length;
+            imgs[carouselIndex].style.display = 'block';
+        }
+        function showProduct(id) {
+            document.querySelectorAll('.product-modal').forEach(function(modal) {
+                modal.style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeProduct() {
+            document.querySelectorAll('.product-modal').forEach(function(modal) {
+                modal.style.display = 'none';
+            });
+        }
+        let catalogIndex = 0;
+        const catalogVisible = 3;
+        function moveCatalog(dir) {
+            const list = document.getElementById('catalogCarouselList');
+            const items = list.children.length;
+            catalogIndex = (catalogIndex + dir + items) % items;
+            let offset = -catalogIndex * (list.children[0].offsetWidth + 28); // 28px gap
+            list.style.transform = `translateX(${offset}px)`;
+        }
+        function goToProductPage(productId) {
+            window.location.href = productId + '.html';
+        }
+        // Короткая анимация приветственного кружка
+        window.addEventListener('DOMContentLoaded', function() {
+            const circle = document.getElementById('welcomeCircle');
+            const bg = document.getElementById('welcomeCircleBg');
+            if(circle && bg) {
+                circle.classList.add('show');
+                bg.classList.add('show');
+                circle.addEventListener('click', function() {
+                    circle.classList.remove('show');
+                    circle.classList.add('hide');
+                    bg.classList.remove('show');
+                    bg.classList.add('hide');
+                    setTimeout(()=>{
+                        circle.style.display='none';
+                        bg.style.display='none';
+                    }, 1200);
+                });
+                setTimeout(function() {
+                    circle.classList.remove('show');
+                    circle.classList.add('hide');
+                    bg.classList.remove('show');
+                    bg.classList.add('hide');
+                    setTimeout(()=>{
+                        circle.style.display='none';
+                        bg.style.display='none';
+                    }, 1200);
+                }, 2000);
+            }
+        });
+        // Для будущей вставки ссылок на Instagram и Telegram
+        // document.getElementById('instagram-link').href = 'https://instagram.com/yourprofile';
+        // document.getElementById('telegram-link').href = 'https://t.me/yourprofile';
+    </script>
+</body>
+</html>
